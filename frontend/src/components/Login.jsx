@@ -9,16 +9,16 @@ function Login() {
       .then((res) => res.json())
       .then(function (data) {
         const html = data
-          .map((user) => {
-            return `
-                        <div class="container">
-                            <img src=${user.profilepic} width="100"> 
-                            ${user.email}
-                        </div>
-                    `;
-          })
-          .join("");
-        userList.innerHTML = html;
+  .map((user, index) => {
+    return `
+      <div class="container" key=${index}>
+        <img src=${user.profilepic} width="100"> 
+        ${user.email}
+      </div>
+    `;
+  })
+  .join("");
+        userList.current.innerHTML = html;
       })
       .catch(function (error) {
         console.error("Error:", error);
@@ -34,24 +34,30 @@ function Login() {
     });
 }
 
-    const handleSubmit = () => {
-      // Send form data to backend using fetch
-      fetch("http://localhost:3000/users/register", {
-        method: "POST",
-        body: data,
-      })
-        .then(function (response) {
-          if (response.ok) {
-            alert("Registration successful!");
-          } else {
-            alert("Registration failed!");
-          }
-        })
-        .catch(function (error) {
-          alert("Registration failed!");
-          console.error("Error:", error);
-        });
-    };
+const handleSubmit = (e) => {
+  e.preventDefault(); // Prevent default form submission behavior
+
+  const formData = new FormData();
+  formData.append("email", data.email);
+  formData.append("password", data.password);
+  formData.append("profilepic", document.getElementById("profilepic").files[0]);
+
+  fetch("http://localhost:3000/users/register", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => {
+      if (response.ok) {
+        alert("Registration successful!");
+      } else {
+        alert("Registration failed!");
+      }
+    })
+    .catch((error) => {
+      alert("Registration failed!");
+      console.error("Error:", error);
+    });
+};
 
   return (
     <>
